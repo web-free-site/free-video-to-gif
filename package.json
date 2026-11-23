@@ -2,13 +2,13 @@
   "name": "free-video-to-gif",
   "version": "1.0.0",
   "private": true,
-  "description": "Free Video to GIF Converter — convert local video to GIF in the browser",
+  "description": "Free Video to GIF Converter \u2014 convert local video to GIF in the browser",
   "author": "web-free.site",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "postinstall": "node scripts/patch-modern-gif.mjs",
-    "build": "vite build && node scripts/prerender-seo.mjs && node scripts/generate-sitemap.mjs && node scripts/inject-more-tools.mjs",
+    "build": "vite build && node scripts/prerender-seo.mjs && node scripts/generate-sitemap.mjs && node scripts/inject-more-tools.mjs && node scripts/inject-hub-legal.mjs",
     "preview": "vite preview",
     "start": "vite"
   },
