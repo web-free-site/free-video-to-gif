@@ -23,26 +23,44 @@ export function ProcessingBar() {
     const fetched = await grabFramesAndCombine();
     const { outputFrameDurationMS } = outputTimeRange();
 
+    // Each frame must own its ArrayBuffer — shared views break worker postMessage (DataCloneError).
     const frames: { data: Uint8ClampedArray; delay: number }[] = Array.from({ length: fetched.frameCount }, (_, i) => {
-      const slice = fetched.combined.subarray(i * fetched.frameDataSize, (i + 1) * fetched.frameDataSize);
+      const begin = i * fetched.frameDataSize;
+      const end = begin + fetched.frameDataSize;
+      const copy = fetched.combined.slice(begin, end);
       return {
-        data: new Uint8ClampedArray(slice.buffer, slice.byteOffset, slice.byteLength),
+        data: new Uint8ClampedArray(copy.buffer, copy.byteOffset, copy.byteLength),
         delay: outputFrameDurationMS[i],
       };
     });
 
     setPercentage(-1);
     setProgress('Encoding to GIF');
-    const output = await GIFEncode({
-      workerUrl: GIFWorkerJS as unknown as string,
+    const encodeOpts = {
       width: outputSize().width,
       height: outputSize().height,
       maxColors: store.options.maxColors,
-      format: 'arrayBuffer',
+      format: 'arrayBuffer' as const,
       frames,
       looped: store.options.loop,
       loopCount: store.options.loop ? 0 : undefined,
-    });
+    };
+    let output: ArrayBuffer;
+    try {
+      output = await GIFEncode({
+        ...encodeOpts,
+        workerUrl: GIFWorkerJS as unknown as string,
+      });
+    } catch (workerErr) {
+      const msg = String(workerErr);
+      if (/DataCloneError|OperationError|could not be cloned|postMessage/i.test(msg)) {
+        reportError('GIF worker encode failed, retrying on main thread', workerErr);
+        setProgress('Encoding to GIF (main thread)');
+        output = await GIFEncode(encodeOpts);
+      } else {
+        throw workerErr;
+      }
+    }
 
     setPercentage(100);
     setProgress('Finished');
@@ -88,6 +106,9 @@ export function ProcessingBar() {
           const imageData = ctx.getImageData(0, 0, width, height);
           combined.set(imageData.data, (grabbedCount - 1) * frameDataSize);
           frameCount = grabbedCount;
+          if (frame.image instanceof ImageBitmap) {
+            frame.image.close();
+          }
           return isRunning();
         },
         ffmpeg: store.ffmpeg,

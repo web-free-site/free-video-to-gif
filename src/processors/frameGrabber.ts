@@ -293,10 +293,16 @@ export async function grabFramesWithFFMpeg({ fileContent, fileExtname, resizeWid
   return outputFrames
 }
 
+const MP4BOX_EXTS = new Set(['mp4', 'm4v', 'mov', '3gp', '3g2']);
+
 export async function grabFrames(options: GrabFrameOptions) {
   let error: any;
+  const tryMp4Box = MP4BOX_EXTS.has(options.fileExtname.toLowerCase())
+    ? () => grabFramesWithMP4Box(options)
+    : () => Promise.reject(new Error('skip mp4box for ' + options.fileExtname));
+
   let answer = await
-    grabFramesWithMP4Box(options)
+    tryMp4Box()
       .catch(err => {
         reportError('grabFramesWithMP4Box error', err);
         return grabFramesWithFFMpeg(options);
