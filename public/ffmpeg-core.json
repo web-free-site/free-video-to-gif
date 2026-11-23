@@ -1,0 +1,8 @@
+{
+  "license": "LGPL-2.1-or-later",
+  "description": "Single-threaded FFmpeg WebAssembly build (no GPL x264). Used only as an optional decode fallback when WebCodecs cannot read a file. Hosted at runtime, not in Worker static assets.",
+  "coreJsUrl": "https://assets.web-free.site/free-video-to-mp3/ffmpeg-core.js",
+  "coreWasmUrl": "https://assets.web-free.site/free-video-to-mp3/ffmpeg-core.wasm",
+  "wasmBytes": 30391151,
+  "fallbackWasmBytes": 30391151
+}

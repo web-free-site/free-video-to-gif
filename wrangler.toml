@@ -1,0 +1,11 @@
+name = "free-video-to-gif"
+compatibility_date = "2025-11-01"
+
+[assets]
+directory = "dist"
+html_handling = "auto-trailing-slash"
+not_found_handling = "none"
+
+[[routes]]
+pattern = "free-video-to-gif.web-free.site"
+custom_domain = true

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://free-video-to-gif.web-free.site/sitemap.xml
