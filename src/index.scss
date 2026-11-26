@@ -111,3 +111,7 @@ textarea {
   font-size: 0.95rem;
   color: #444;
 }
+
+html.app-ready #seo-prerender {
+  display: none;
+}

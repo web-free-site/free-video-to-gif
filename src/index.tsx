@@ -10,4 +10,6 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   throw new Error('Root element not found');
 }
 
+document.documentElement.classList.add('app-ready');
+
 render(() => <App />, root!);

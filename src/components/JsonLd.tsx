@@ -41,7 +41,7 @@ export function JsonLdFaq(props: { faqs: { question: string; answer: string }[] 
         acceptedAnswer: { '@type': 'Answer', text: f.answer },
       })),
     };
-    const id = 'faq-json-ld';
+    const id = document.getElementById('static-faq-json-ld') ? 'static-faq-json-ld' : 'faq-json-ld';
     let el = document.getElementById(id) as HTMLScriptElement | null;
     if (!el) {
       el = document.createElement('script');
