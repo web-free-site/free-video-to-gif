@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { homeFaqHtml, homeSeoArticleHtml } from './home-seo-html.mjs';
 
 const HOST = 'https://free-video-to-gif.web-free.site';
 const dist = path.resolve('dist');
@@ -91,4 +92,8 @@ for (const page of pages) {
   fs.writeFileSync(path.join(dir, 'index.html'), buildPage(page));
 }
 
-console.log('Prerendered', pages.length, 'SEO HTML shells into dist/');
+const homeSeoBlock = `<section id="seo-prerender" class="seo-prerender"><h1>Free Video to GIF Converter</h1><p>Pick a video from your device, trim a clip, and download a GIF. Nothing is uploaded.</p>${homeSeoArticleHtml()}${homeFaqHtml()}</section>`;
+let homeHtml = baseHtml.replace('<div id="root"></div>', `${homeSeoBlock}<div id="root"></div>`);
+fs.writeFileSync(path.join(dist, 'index.html'), homeHtml);
+
+console.log('Prerendered', pages.length, 'SEO HTML shells plus homepage into dist/');
